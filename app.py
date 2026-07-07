@@ -87,12 +87,12 @@ def stop():
     if not ids:
         return jsonify({
             "message": "No containers running"
-        })
+        }), 200
 
     return jsonify({
         "message": "Containers stopped",
         "stopped_containers": ids
-    })
+    }), 200
 
 @app.route("/container-stats/<container_id>")
 def stats(container_id):

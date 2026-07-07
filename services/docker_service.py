@@ -1,5 +1,9 @@
 import subprocess
 import json
+from datetime import datetime
+
+from database import db
+from models import ContainerLog
 
 def docker(command):
     return subprocess.run(
@@ -8,6 +12,18 @@ def docker(command):
         text=True
     )
 
+def inspect(container_id):
+
+    result = docker([
+        "inspect",
+        container_id
+    ])
+
+    if result.returncode != 0:
+        return None
+
+    return json.loads(result.stdout)[0]
+
 def docker_health():
 
     result = docker(["info"])
@@ -15,6 +31,7 @@ def docker_health():
     return result.returncode == 0
 
 def deploy_container(image):
+
     result = docker(["run", "-d", image])
 
     if result.returncode != 0:
@@ -23,11 +40,25 @@ def deploy_container(image):
             "error": result.stderr.strip()
         }
 
+    container_id = result.stdout.strip()
+
+    info = inspect(container_id)
+
+    log = ContainerLog(
+        container_id=container_id,
+        container_name=info["Name"].lstrip("/"),
+        image=info["Config"]["Image"],
+        status=info["State"]["Status"],
+        created_at=datetime.now()
+    )
+
+    db.session.add(log)
+    db.session.commit()
+
     return {
         "success": True,
-        "container_id": result.stdout.strip()
+        "container_id": container_id
     }
-
 
 def list_containers():
 
@@ -42,21 +73,29 @@ def list_containers():
 
 def stop_all_containers():
 
-    result = docker([
-        "container",
-        "ls",
-        "-q"
-    ])
+    running = ContainerLog.query.filter_by(
+        status="running"
+    ).all()
 
-    ids = result.stdout.splitlines()
-
-    if not ids:
+    if not running:
         return []
 
-    docker(["stop"] + ids)
+    stopped_ids = []
 
-    return ids
+    for container in running:
 
+        result = docker(["stop", container.container_id])
+
+        if result.returncode == 0:
+
+            container.status = "stopped"
+            container.stopped_at = datetime.now()
+
+            stopped_ids.append(container.container_id)
+
+    db.session.commit()
+
+    return stopped_ids
 
 def docker_status():
 
