@@ -1,4 +1,3 @@
-
 import os
 from dotenv import load_dotenv
 from services.docker_service import (
@@ -12,7 +11,11 @@ from services.docker_service import (
 from services.metrics_collector import start_metrics_collector
 from database import db
 from flask import Flask, jsonify, request
-
+from services.dashboard_service import (
+    dashboard_summary,
+    live_containers,
+    deployment_history
+)
 load_dotenv()
 
 app = Flask(__name__)
@@ -21,6 +24,31 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
+
+"""FRONTEND API'S"""
+
+@app.route("/dashboard")
+def dashboard():
+
+    return jsonify(
+        dashboard_summary()
+    )
+
+@app.route("/history")
+def history():
+
+    return jsonify(
+        deployment_history()
+    )
+
+@app.route("/containers/live")
+def live_container_api():
+
+    return jsonify(
+        live_containers()
+    )
+
+"""BACKEND API'S"""
 
 @app.route("/health")
 def health():
