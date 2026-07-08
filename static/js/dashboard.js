@@ -1,101 +1,244 @@
-async function loadDashboard(){
-    const response = await fetch("/dashboard");
+// =========================================
+// Wait until HTML is fully loaded
+// =========================================
 
-    const data = await response.json();
+document.addEventListener("DOMContentLoaded", () => {
 
-    document.getElementById("running-count").textContent =
-        data.running;
+    // ============================
+    // CPU Chart
+    // ============================
 
-    document.getElementById("stopped-count").textContent =
-        data.stopped;
+    const cpuChart = new Chart(
+        document.getElementById("cpuChart"),
+        {
+            type: "line",
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: "CPU Usage (%)",
+                        data: [],
+                        borderColor: "#3b82f6",
+                        backgroundColor: "rgba(59,130,246,.2)",
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        }
+    );
 
-    document.getElementById("deployment-count").textContent =
-        data.deployments;
+    // ============================
+    // Memory Chart
+    // ============================
 
-    document.getElementById("docker-status").textContent =
-        data.docker;
-}
+    const memoryChart = new Chart(
+        document.getElementById("memoryChart"),
+        {
+            type: "line",
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: "Memory Usage (MB)",
+                        data: [],
+                        borderColor: "#22c55e",
+                        backgroundColor: "rgba(34,197,94,.2)",
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        }
+    );
 
-async function loadContainers(){
+    // =====================================
+    // Dashboard Cards
+    // =====================================
 
-    const response = await fetch("/containers/live");
-    const containers = await response.json();
-    const tbody = document.querySelector("#container-table tbody");
+    async function loadDashboard() {
 
-    tbody.innerHTML = "";
+        const response = await fetch("/dashboard");
+        const data = await response.json();
 
-    containers.forEach(container => {
+        document.getElementById("running-count").textContent = data.running;
+        document.getElementById("stopped-count").textContent = data.stopped;
+        document.getElementById("deployment-count").textContent = data.deployments;
 
-        tbody.innerHTML += `
+        document.getElementById("docker-status").innerHTML =
+            data.docker === "connected"
+                ? '<span class="running">🟢 Connected</span>'
+                : '<span class="stopped">🔴 Disconnected</span>';
+    }
 
-        <tr>
+    // =====================================
+    // Containers
+    // =====================================
 
-            <td>${container.name}</td>
+    async function loadContainers() {
 
-            <td>${container.image}</td>
+        const response = await fetch("/containers/live");
+        const containers = await response.json();
 
-            <td>${container.cpu.toFixed(2)} %</td>
+        const tbody = document.querySelector("#container-table tbody");
 
-            <td>${container.memory.toFixed(2)} MB</td>
+        tbody.innerHTML = "";
 
-            <td>${container.network_rx.toFixed(2)} MB</td>
+        containers.forEach(container => {
 
-            <td>${container.disk_read.toFixed(2)} MB</td>
+            tbody.innerHTML += `
+                <tr>
 
-            <td>${container.status}</td>
+                    <td>${container.name}</td>
 
-        </tr>
+                    <td>${container.image}</td>
 
-        `;
+                    <td>${container.cpu.toFixed(2)} %</td>
 
-    });
+                    <td>${container.memory.toFixed(2)} MB</td>
 
-}
+                    <td>${container.network_rx.toFixed(2)} MB</td>
 
-async function loadHistory(){
+                    <td>${container.disk_read.toFixed(2)} MB</td>
 
-    const response = await fetch("/history");
+                    <td>
 
-    const history = await response.json();
+                        ${
+                            container.status === "running"
 
-    const tbody = document.querySelector("#history-table tbody");
+                            ?
 
-    tbody.innerHTML = "";
+                            '<span class="running">🟢 Running</span>'
 
-    history.forEach(container=>{
+                            :
 
-        tbody.innerHTML += `
+                            '<span class="stopped">🔴 Stopped</span>'
+                        }
 
-        <tr>
+                    </td>
 
-            <td>${container.name}</td>
+                </tr>
+            `;
+        });
 
-            <td>${container.image}</td>
+        if (containers.length > 0) {
 
-            <td>${container.created_at}</td>
+            loadCharts(containers[0].id);
 
-            <td>${container.stopped_at ?? "-"}</td>
+        }
 
-            <td>${container.status}</td>
+    }
 
-        </tr>
+    // =====================================
+    // History
+    // =====================================
 
-        `;
+    async function loadHistory() {
 
-    });
+        const response = await fetch("/history");
+        const history = await response.json();
 
-}
+        const tbody = document.querySelector("#history-table tbody");
 
-function refresh(){
+        tbody.innerHTML = "";
 
-    loadDashboard();
+        history.forEach(container => {
 
-    loadContainers();
+            tbody.innerHTML += `
 
-    loadHistory();
+                <tr>
 
-}
+                    <td>${container.name}</td>
 
-refresh();
+                    <td>${container.image}</td>
 
-setInterval(refresh,5000);
+                    <td>${new Date(container.created_at).toLocaleString()}</td>
+
+                    <td>
+
+                        ${
+                            container.stopped_at
+
+                            ?
+
+                            new Date(container.stopped_at).toLocaleString()
+
+                            :
+
+                            "-"
+                        }
+
+                    </td>
+
+                    <td>${container.status}</td>
+
+                </tr>
+
+            `;
+
+        });
+
+    }
+
+    // =====================================
+    // Charts
+    // =====================================
+
+    async function loadCharts(containerId) {
+
+        const response = await fetch(`/metrics/${containerId}`);
+
+        const metrics = await response.json();
+
+        const labels = [];
+        const cpu = [];
+        const memory = [];
+
+        metrics.forEach(metric => {
+
+            labels.push(
+                new Date(metric.time).toLocaleTimeString()
+            );
+
+            cpu.push(metric.cpu);
+            memory.push(metric.memory);
+
+        });
+
+        cpuChart.data.labels = labels;
+        cpuChart.data.datasets[0].data = cpu;
+        cpuChart.update();
+
+        memoryChart.data.labels = labels;
+        memoryChart.data.datasets[0].data = memory;
+        memoryChart.update();
+
+    }
+
+    // =====================================
+    // Refresh
+    // =====================================
+
+    async function refresh() {
+
+        await loadDashboard();
+
+        await loadContainers();
+
+        await loadHistory();
+
+    }
+
+    refresh();
+
+    setInterval(refresh, 5000);
+
+});
