@@ -28,41 +28,42 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
-@app.route("/")
+"""  <!-- ===================== -->
+    <!-- FRONTEND API'S -->
+    <!-- ===================== -->"""
+@app.route("/")                                                     # home page route
 def home():
     return render_template("index.html")
 
-"""FRONTEND API'S"""
-
-@app.route("/dashboard")
+@app.route("/dashboard")                                            # dashboard route ---> shows summary counts
 def dashboard():
 
     return jsonify(
         dashboard_summary()
     )
 
-@app.route("/metrics/<int:container_id>")
+@app.route("/metrics/<int:container_id>")                           # shows the history of container from container_metrics table using container_id
 def metrics(container_id):
 
     return jsonify(
         container_metrics(container_id)
     )
 
-@app.route("/metrics/latest")
+@app.route("/metrics/latest")                                       # shows data of latest running container stored in container_metric table
 def latest_metrics_api():
 
     return jsonify(
         latest_metrics()
     )
 
-@app.route("/history")
+@app.route("/history")                                              # shows deployment history stored in container_logs table
 def history():
 
     return jsonify(
         deployment_history()
     )
 
-@app.route("/containers/live")
+@app.route("/containers/live")                                      # shows all the running containers 
 def live_container_api():
 
     return jsonify(
@@ -71,7 +72,7 @@ def live_container_api():
 
 """BACKEND API'S"""
 
-@app.route("/health")
+@app.route("/health")                                               # shows docker health using "docker info" command
 def health():
 
     docker_ok = docker_health()
@@ -90,7 +91,7 @@ def health():
         "database": "connected" if database_ok else "disconnected"
     }), 200 if overall else 503
 
-@app.route("/status")
+@app.route("/status")                                               # shows the number of containers running
 def status():
 
     count = docker_status()
@@ -100,7 +101,7 @@ def status():
         "containers": count
     })
 
-@app.route("/deploy", methods=["POST"])
+@app.route("/deploy", methods=["POST"])                             # POST route used to deploy docker image
 def deploy():
 
     data = request.get_json()
@@ -122,14 +123,14 @@ def deploy():
         "container_id": result["container_id"]
     })
 
-@app.route("/containers")
+@app.route("/containers")                                           # gives the names of all the running containers
 def containers():
 
     return jsonify({
         "containers": list_containers()
     })
 
-@app.route("/stop", methods=["POST"])
+@app.route("/stop", methods=["POST"])                               # POST request which stops all the running containers
 def stop():
 
     ids = stop_all_containers()
@@ -146,12 +147,12 @@ def stop():
 
 if __name__ == "__main__":
 
-    with app.app_context():
+    with app.app_context():                                         # creates all the databases specified in models.py
         db.create_all()
 
-    start_metrics_collector(app)
+    start_metrics_collector(app)                                    # starts the metric_collector thread
 
-    app.run(
+    app.run(                                                        # app runs at port 5000
         host="0.0.0.0",
         port=5000
     )

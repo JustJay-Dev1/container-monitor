@@ -1,23 +1,23 @@
-version: "3.9"
+version: "3.9"                                          # specified schema version           
 
 services:
     postgres:
-        image: postgres:16
+        image: postgres:16                              # specified image and its version
 
-        container_name: monitoring-db
+        container_name: monitoring-db                   # gave a container name
 
-        restart: always
+        restart: always                                 # the container will automatically start up if it crashes
 
-        environment:
-            POSTGRES_USER: admin
+        environment:                                    # set environment variables
+            POSTGRES_USER: admin                        # create admin account and password
             POSTGRES_PASSWORD: admin123
-            POSTGRES_DB: monitoring
+            POSTGRES_DB: monitoring                     # creates default database
 
         ports:
-            - "5432:5432"
+            - "5432:5432"                               # maps port from local host machine directly to port inside container respectively  
 
         volumes:
-            - postgres_data:/var/lib/postgresql/data
+            - postgres_data:/var/lib/postgresql/data    # gives path where postgress saves data 
 
-volumes:
+volumes:                                                # declares data volume at root level, gurantees that the database records are permanantly saved to host
     postgres_data:

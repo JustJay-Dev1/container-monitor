@@ -1,3 +1,6 @@
+"""  <!-- ===================== -->
+    <!-- this is a metric collector thread which executes every METRICS_INTERVAL to get all the data from every running container and store it in container_metric table  -->
+    <!-- ===================== -->"""
 import os
 import json
 import re
@@ -12,12 +15,12 @@ from services.docker_service import docker
 from dotenv import load_dotenv
 load_dotenv()
 
-METRICS_INTERVAL = int(os.getenv("METRICS_INTERVAL", 5))
+METRICS_INTERVAL = int(os.getenv("METRICS_INTERVAL", 5))                # use the METRICS_INTERVAL variable created in .env file, has default value 5
 
-def parse_cpu(cpu):
+def parse_cpu(cpu):                                                     # used to process the cpu output by removing % from the output 
     return float(cpu.replace("%", ""))
 
-def convert_to_mb(value):
+def convert_to_mb(value):                                               # converts all the value to megabytes
 
     value = value.strip()
 
@@ -40,13 +43,13 @@ def convert_to_mb(value):
 
     return number
 
-def parse_memory(memory):
+def parse_memory(memory):                                               # get memory used in GBs and convert it into MBs
 
     used = memory.split("/")[0].strip()
 
     return convert_to_mb(used)
 
-def parse_network(network):
+def parse_network(network):                                             # split network into received and transmitted
 
     rx, tx = network.split("/")
 
@@ -55,7 +58,7 @@ def parse_network(network):
         convert_to_mb(tx.strip())
     )
 
-def parse_disk(disk):
+def parse_disk(disk):                                                   # split disk into read and write
 
     read, write = disk.split("/")
 
@@ -64,9 +67,9 @@ def parse_disk(disk):
         convert_to_mb(write.strip())
     )
 
-def collect_metrics():
+def collect_metrics():                                                  # collect all the data required to store intpo container_metrics table
 
-    running = ContainerLog.query.filter_by(
+    running = ContainerLog.query.filter_by(                             # runs "SELECT * FROM container_log WHERE status = 'running';" on container_logs to get all the running containers
         status="running"
     ).all()
 
@@ -78,7 +81,7 @@ def collect_metrics():
         for c in running
     }
 
-    result = docker([
+    result = docker([                                                   # runs "docker stats container_id --no-stream --format "{{json .}}"", get json output of docker stats 
         "stats",
         "--no-stream",
         "--format",
@@ -139,7 +142,7 @@ def collect_metrics():
 
         db.session.commit()
 
-def collector_loop():
+def collector_loop():                                                   # run collecter_metrics function every METRICS_INTERVAL
 
     while True:
 
@@ -153,7 +156,7 @@ def collector_loop():
 
         time.sleep(METRICS_INTERVAL)
 
-def start_metrics_collector(app):
+def start_metrics_collector(app):                                       # starts a background thread that runs a infinite metric-collection loop
 
     def collector():
 

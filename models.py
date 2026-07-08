@@ -1,9 +1,11 @@
 from database import db
-
+"""  <!-- ===================== -->
+    <!-- Create container_log table -->
+    <!-- ===================== -->"""
 class ContainerLog(db.Model):
     __tablename__ = "container_logs"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)                                                                # primary key
 
     container_id = db.Column(db.String(64), nullable=False)
 
@@ -17,15 +19,18 @@ class ContainerLog(db.Model):
 
     stopped_at = db.Column(db.DateTime)
 
-    metrics = db.relationship("ContainerMetric", backref="container", lazy=True, cascade="all, delete-orphan")
+    metrics = db.relationship("ContainerMetric", backref="container", lazy=True, cascade="all, delete-orphan") # created a relation between 2 tables using ORM feature of SQLAlchemy
 
+"""  <!-- ===================== -->
+    <!-- create container_metric table -->
+    <!-- ===================== -->"""
 class ContainerMetric(db.Model):
 
     __tablename__ = "container_metrics"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)                                                                # primary key
 
-    container_log_id = db.Column(
+    container_log_id = db.Column(                                                                               # foreign key from container_logs table
         db.Integer,
         db.ForeignKey("container_logs.id"),
         nullable=False
