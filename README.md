@@ -259,6 +259,10 @@ During this project I gained practical experience with
 - Git & GitHub
 
 ---
+# ❗Limitation
+ContainerPulse tracks containers deployed through its REST API. Containers started or stopped directly using Docker CLI are not synchronized with the database in the current version.
+---
+
 # 🚧 Future Improvements
 
 - Container restart endpoint
