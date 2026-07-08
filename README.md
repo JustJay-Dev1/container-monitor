@@ -44,7 +44,7 @@ ContainerPulse is a lightweight monitoring system that tracks Docker containers 
 
 # 📁 Project Structure
 
-![Folder Structure](static/screenshots/folder structure.png)
+![FolderStructure](static/screenshots/folder structure.png)
 
 # ⚙️ How It Works
 
@@ -66,7 +66,7 @@ Shows
 - Total Deployments
 - Docker Connection Status
 
-![Dashboard](static/screenshots/full-page.png)
+![Dashboard](static/screenshots/full page.png)
 
 ---
 
@@ -82,21 +82,21 @@ Metrics include
 - Disk I/O
 - Container Status
 
-![Live Containers](static/screenshots/full page.png)
+![Live_Containers](static/screenshots/full_page.png)
 
 ---
 ## CPU Usage
 
 Real-time CPU utilization collected every 5 seconds.
 
-![CPU Chart](static/screenshots/cpu-usage.png)
+![CPU_Chart](static/screenshots/cpu_usage.png)
 
 ---
 ## Memory Usage
 
 Real-time Memory utilization.
 
-![Memory Chart](static/screenshots/memoryusage.png)
+![Memory_Chart](static/screenshots/memoryusage.png)
 
 ---
 ## Deployment History
@@ -129,7 +129,7 @@ Stores deployment information.
 | created_at |
 | stopped_at |
 
-![Container Logs](static/screenshots/container_logs.png)
+![Container_Logs](static/screenshots/container_logs.png)
 
 ---
 
@@ -148,7 +148,7 @@ Stores historical metrics.
 | disk_write |
 | recorded_at |
 
-![Container Metrics](static/screenshots/container_metrics.png)
+![Container_Metrics](static/screenshots/container_metrics.png)
 
 ---
 # 🌐 REST API
