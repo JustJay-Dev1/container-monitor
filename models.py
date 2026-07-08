@@ -20,16 +20,30 @@ class ContainerLog(db.Model):
     metrics = db.relationship("ContainerMetric", backref="container", lazy=True, cascade="all, delete-orphan")
 
 class ContainerMetric(db.Model):
+
     __tablename__ = "container_metrics"
 
-    id = db.Column(db.Integer,primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
 
-    container_log_id = db.Column(db.Integer,db.ForeignKey('container_logs.id'), nullable=False)
+    container_log_id = db.Column(
+        db.Integer,
+        db.ForeignKey("container_logs.id"),
+        nullable=False
+    )
 
-    cpu_usage = db.Column(db.Float)
+    cpu_usage = db.Column(db.Float, nullable=False)
 
-    memory_usage = db.Column(db.Float)
+    memory_usage = db.Column(db.Float, nullable=False)
 
-    disk_io = db.Column(db.String(50))
+    network_rx = db.Column(db.Float)
 
-    recorded_at = db.Column(db.DateTime, nullable=False)
+    network_tx = db.Column(db.Float)
+
+    disk_read = db.Column(db.Float)
+
+    disk_write = db.Column(db.Float)
+
+    recorded_at = db.Column(
+        db.DateTime,
+        nullable=False
+    )

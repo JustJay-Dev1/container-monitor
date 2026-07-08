@@ -9,6 +9,7 @@ from services.docker_service import (
     container_stats,
     docker_health
 )
+from services.metrics_collector import start_metrics_collector
 from database import db
 from flask import Flask, jsonify, request
 
@@ -94,26 +95,14 @@ def stop():
         "stopped_containers": ids
     }), 200
 
-@app.route("/container-stats/<container_id>")
-def stats(container_id):
-
-    data = container_stats(container_id)
-
-    if data is None:
-        return jsonify({
-            "error": "Container not found"
-        }),404
-
-    return jsonify({
-        "container": data["Name"],
-        "cpu": data["CPUPerc"],
-        "memory": data["MemUsage"],
-        "memory_percent": data["MemPerc"],
-        "network": data["NetIO"]
-    })
-
 if __name__ == "__main__":
+
     with app.app_context():
         db.create_all()
 
-    app.run(host="0.0.0.0", port=5000)
+    start_metrics_collector(app)
+
+    app.run(
+        host="0.0.0.0",
+        port=5000
+    )
