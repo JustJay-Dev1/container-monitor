@@ -41,6 +41,71 @@ ContainerPulse is a lightweight monitoring system that tracks Docker containers 
 | Operating System | Linux (WSL) |
 
 ---
+# 🗼Architecture Diagram
+```text
+                                    +----------------------+
+                                    |        User          |
+                                    | (Browser / Postman)  |
+                                    +----------+-----------+
+                                               |
+                                               | HTTP Requests
+                                               |
+                                               v
+                               +-------------------------------+
+                               |         Flask API             |
+                               |            app.py             |
+                               +---------------+---------------+
+                                               |
+                     +-------------------------+-------------------------+
+                     |                                                   |
+                     |                                                   |
+                     v                                                   v
+        +---------------------------+                     +----------------------------+
+        |      Docker Service       |                     |    Dashboard Service       |
+        |   deploy / stop / stats   |                     | Queries & Aggregations     |
+        +-------------+-------------+                     +-------------+--------------+
+                      |                                                   |
+                      |                                                   |
+                      v                                                   |
+             +--------------------+                                      |
+             |   Docker Engine    |                                      |
+             |  (Containers)      |                                      |
+             +----------+---------+                                      |
+                        |                                                |
+                        | docker stats                                   |
+                        |                                                |
+                        v                                                |
+             +-----------------------------+                             |
+             |    Metrics Collector        |<----------------------------+
+             | Background Thread (5 sec)   |
+             +--------------+--------------+
+                            |
+                            | Stores Metrics
+                            |
+                            v
+                 +------------------------------+
+                 |      PostgreSQL Database     |
+                 |------------------------------|
+                 | container_logs               |
+                 | container_metrics            |
+                 +--------------+---------------+
+                                ^
+                                |
+                                | Reads Dashboard Data
+                                |
+                    +-----------+------------+
+                    |      dashboard.js      |
+                    | Charts & Live Tables   |
+                    +-----------+------------+
+                                |
+                                |
+                                v
+                     +------------------------+
+                     |   HTML + CSS + Charts  |
+                     |   ContainerPulse UI    |
+                     +------------------------+
+```
+---
 
 # 📁 Project Structure
 
