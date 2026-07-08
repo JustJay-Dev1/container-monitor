@@ -10,12 +10,15 @@ from services.docker_service import (
 )
 from services.metrics_collector import start_metrics_collector
 from database import db
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from services.dashboard_service import (
     dashboard_summary,
     live_containers,
-    deployment_history
+    deployment_history,
+    container_metrics,
+    latest_metrics
 )
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -25,6 +28,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
+@app.route("/")
+def home():
+    return render_template("index.html")
+
 """FRONTEND API'S"""
 
 @app.route("/dashboard")
@@ -32,6 +39,20 @@ def dashboard():
 
     return jsonify(
         dashboard_summary()
+    )
+
+@app.route("/metrics/<int:container_id>")
+def metrics(container_id):
+
+    return jsonify(
+        container_metrics(container_id)
+    )
+
+@app.route("/metrics/latest")
+def latest_metrics_api():
+
+    return jsonify(
+        latest_metrics()
     )
 
 @app.route("/history")

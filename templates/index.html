@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ContainerPulse</title>
+
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+
+            <h1>🐳 ContainerPulse</h1>
+
+            <p>Real-Time Container Monitoring Dashboard</p>
+
+        </header>
+
+        <section class="cards">
+
+            <div class="card">
+                <h3>Running</h3>
+                <p id="running-count">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Stopped</h3>
+                <p id="stopped-count">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Deployments</h3>
+                <p id="deployment-count">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Docker</h3>
+                <p id="docker-status">Disconnected</p>
+            </div>
+
+        </section>
+
+        <section>
+
+            <h2>Live Containers</h2>
+
+            <table id="container-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Name</th>
+
+                        <th>Image</th>
+
+                        <th>CPU</th>
+
+                        <th>Memory</th>
+
+                        <th>Network</th>
+
+                        <th>Disk</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <section>
+
+            <h2>Deployment History</h2>
+
+            <table id="history-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Name</th>
+
+                        <th>Image</th>
+
+                        <th>Created</th>
+
+                        <th>Stopped</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </div>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+</html>
