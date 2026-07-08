@@ -8,7 +8,7 @@ ContainerPulse is a lightweight monitoring system that tracks Docker containers 
 
 ## 📸 Dashboard Preview
 
-![Dashboard](static/screenshots/full-page.png)
+![Dashboard](static/screenshots/full page.png)
 
 ---
 
@@ -82,7 +82,7 @@ Metrics include
 - Disk I/O
 - Container Status
 
-![Live Containers](static/screenshots/full-page.png)
+![Live Containers](static/screenshots/full page.png)
 
 ---
 ## CPU Usage
