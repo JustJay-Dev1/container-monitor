@@ -218,6 +218,31 @@ http://localhost:5000
 ```
 
 ---
+## ⚙️ Configuration
+
+Create a `.env` file in the project root.
+
+```env
+# PostgreSQL Database URL
+DATABASE_URL=postgresql://admin:password@localhost:5432/monitoring
+
+# Metrics collection interval (seconds)
+METRICS_INTERVAL=5
+```
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DATABASE_URL` | PostgreSQL connection string used by SQLAlchemy | `postgresql://admin:password@localhost:5432/monitoring` |
+| `METRICS_INTERVAL` | Time interval (in seconds) for collecting container metrics | `5` |
+
+> **Note:** The background metrics collector polls Docker every `METRICS_INTERVAL` seconds and stores CPU, memory, network, and disk usage in PostgreSQL.
+
+---
+
+> Copy `.env.example` to `.env` and update the values according to your local PostgreSQL configuration.
+---
 # 📚 What I Learned
 
 During this project I gained practical experience with
