@@ -8,7 +8,7 @@ ContainerPulse is a lightweight monitoring system that tracks Docker containers 
 
 ## 📸 Dashboard Preview
 
-![Dashboard](static/screenshots/full page.png)
+![Dashboard](static/screenshots/full_page.png)
 
 ---
 
@@ -44,7 +44,7 @@ ContainerPulse is a lightweight monitoring system that tracks Docker containers 
 
 # 📁 Project Structure
 
-![FolderStructure](static/screenshots/folder structure.png)
+![FolderStructure](static/screenshots/folder_structure.png)
 
 # ⚙️ How It Works
 
@@ -66,7 +66,7 @@ Shows
 - Total Deployments
 - Docker Connection Status
 
-![Dashboard](static/screenshots/full page.png)
+![Dashboard](static/screenshots/full_page.png)
 
 ---
 
@@ -168,9 +168,9 @@ Stores historical metrics.
 Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/container-monitor.git
+git clone https://github.com/JustJay-Dev1/ContainerPulse.git
 
-cd container-monitor
+cd ContainerPulse
 ```
 
 Create virtual environment
