@@ -342,6 +342,3 @@ ContainerPulse tracks containers deployed through its REST API. Containers start
 - Search functionality
 
 ---
-# 📄 License
-
-MIT License
